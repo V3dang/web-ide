@@ -16,6 +16,7 @@ function App() {
   const [selectedFile, setSelectedFile] = useState("");
   const [selectedFileContent, setSelectedFileContent] = useState("");
   const [code, setCode] = useState("");
+  const [previewKey, setPreviewKey] = useState(Date.now());
 
   const isSaved = selectedFileContent === code;
 
@@ -91,6 +92,17 @@ function App() {
             mode={getFileMode({ selectedFile })}
             value={code}
             onChange={(e) => setCode(e)}
+          />
+        </div>
+        <div className="preview">
+          <div className="preview-header">
+            <p>Preview</p>
+            <button onClick={() => setPreviewKey(Date.now())}>Reload</button>
+          </div>
+          <iframe
+            key={previewKey}
+            title="react-preview"
+            src="http://localhost:8000"
           />
         </div>
       </div>
