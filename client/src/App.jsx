@@ -7,6 +7,13 @@ import Editor from "@monaco-editor/react";
 
 import { getFileMode } from "./utils/getFileMode";
 
+const protocol = window.location.protocol === "https:" ? "https" : "http";
+const host = window.location.hostname;
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || `${protocol}://${host}:9000`;
+const PREVIEW_URL =
+  import.meta.env.VITE_PREVIEW_URL || `${protocol}://${host}:8000`;
+
 function App() {
   const [fileTree, setFileTree] = useState({});
   const [selectedFile, setSelectedFile] = useState("");
@@ -39,7 +46,7 @@ function App() {
   }, [selectedFileContent]);
 
   const getFileTree = async () => {
-    const response = await fetch("http://localhost:9000/files");
+    const response = await fetch(`${API_BASE_URL}/files`);
     const result = await response.json();
     setFileTree(result.tree);
   };
@@ -47,7 +54,7 @@ function App() {
   const getFileContents = useCallback(async () => {
     if (!selectedFile) return;
     const response = await fetch(
-      `http://localhost:9000/files/content?path=${selectedFile}`
+      `${API_BASE_URL}/files/content?path=${selectedFile}`
     );
     const result = await response.json();
     setSelectedFileContent(result.content);
@@ -116,7 +123,7 @@ function App() {
           <iframe
             key={previewKey}
             title="react-preview"
-            src="http://localhost:8000"
+            src={PREVIEW_URL}
           />
         </div>
       </div>
