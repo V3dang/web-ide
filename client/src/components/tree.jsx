@@ -1,34 +1,45 @@
+import { useState } from "react";
+
 const FileTreeNode = ({ fileName, nodes, onSelect, path }) => {
   const isDir = !!nodes;
+  const [expanded, setExpanded] = useState(true);
+
   return (
-    <div
-      onClick={(e) => {
-        e.stopPropagation();
-        if (isDir) return;
-        onSelect(path);
-      }}
-      style={{ marginLeft: "10px" }}
-    >
-      <p className={isDir ? "" : "file-node"}>{fileName}</p>
-      {nodes && fileName !== "node_modules" && (
-        <ul>
+    <div className="tree-node">
+      <button
+        type="button"
+        className={`tree-item ${isDir ? "folder-item" : "file-node"}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (isDir) {
+            setExpanded((prev) => !prev);
+            return;
+          }
+          onSelect(path);
+        }}
+      >
+        <span className="tree-prefix">{isDir ? (expanded ? "▾" : "▸") : "•"}</span>
+        <span>{fileName}</span>
+      </button>
+
+      {nodes && fileName !== "node_modules" && expanded && (
+        <div className="tree-children">
           {Object.keys(nodes).map((child) => (
-            <li key={child}>
-              <FileTreeNode
-                onSelect={onSelect}
-                path={path + "/" + child}
-                fileName={child}
-                nodes={nodes[child]}
-              />
-            </li>
+            <FileTreeNode
+              key={child}
+              onSelect={onSelect}
+              path={path + "/" + child}
+              fileName={child}
+              nodes={nodes[child]}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
 };
 
 const FileTree = ({ tree, onSelect }) => {
-  return <FileTreeNode onSelect={onSelect} fileName="/" path="" nodes={tree} />;
+  return <FileTreeNode onSelect={onSelect} fileName="workspace" path="" nodes={tree} />;
 };
 export default FileTree;

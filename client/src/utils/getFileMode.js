@@ -1,6 +1,8 @@
 export const getFileMode = ({ selectedFile }) => {
+  if (!selectedFile) return "javascript";
+
   const splitedArray = selectedFile.split(".");
-  
+
   const extension = splitedArray[splitedArray.length - 1];
 
   switch (extension) {
@@ -15,11 +17,11 @@ export const getFileMode = ({ selectedFile }) => {
     case "rb":
       return "ruby";
     case "sass":
-      return "sass";
+      return "scss";
     case "md":
       return "markdown";
     case "sql":
-      return "mysql";
+      return "sql";
     case "json":
       return "json";
     case "html":
@@ -29,14 +31,14 @@ export const getFileMode = ({ selectedFile }) => {
     case "handlebars":
       return "handlebars";
     case "go":
-      return "golang";
+      return "go";
     case "cs":
       return "csharp";
     case "litcoffee":
-      return "coffee";
+      return "coffeescript";
     case "css":
       return "css";
     default:
-      return "";
+      return "plaintext";
   }
 };

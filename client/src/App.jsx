@@ -3,13 +3,9 @@ import "./App.css";
 import Terminal from "./components/terminal";
 import FileTree from "./components/tree";
 import socket from "./socket";
-import AceEditor from "react-ace";
+import Editor from "@monaco-editor/react";
 
 import { getFileMode } from "./utils/getFileMode";
-
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/ext-language_tools";
 
 function App() {
   const [fileTree, setFileTree] = useState({});
@@ -70,8 +66,19 @@ function App() {
 
   return (
     <div className="playground-container">
+      <header className="top-bar">
+        <div>
+          <h1>Cloud IDE</h1>
+          <p>Monaco editor with live preview</p>
+        </div>
+        <div className={`save-badge ${isSaved ? "saved" : "unsaved"}`}>
+          {selectedFile ? (isSaved ? "Saved" : "Unsaved") : "No file selected"}
+        </div>
+      </header>
+
       <div className="editor-container">
         <div className="files">
+          <div className="section-title">Explorer</div>
           <FileTree
             onSelect={(path) => {
               setSelectedFileContent("");
@@ -81,17 +88,24 @@ function App() {
           />
         </div>
         <div className="editor">
-          {selectedFile && (
-            <p>
-              {selectedFile.replaceAll("/", " > ")}{" "}
-              {isSaved ? "Saved" : "Unsaved"}
-            </p>
-          )}
-          <AceEditor
-            width="100%"
-            mode={getFileMode({ selectedFile })}
+          <div className="section-title editor-title">
+            {selectedFile ? selectedFile.replaceAll("/", " / ") : "Select a file to start editing"}
+          </div>
+          <Editor
+            height="100%"
+            theme="vs-dark"
+            language={getFileMode({ selectedFile })}
             value={code}
-            onChange={(e) => setCode(e)}
+            onChange={(value) => setCode(value || "")}
+            options={{
+              minimap: { enabled: true },
+              fontSize: 14,
+              lineNumbers: "on",
+              wordWrap: "on",
+              smoothScrolling: true,
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
           />
         </div>
         <div className="preview">
